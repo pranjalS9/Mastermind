@@ -15,15 +15,7 @@ namespace Mastermind
             int i = 0;
             while (i < 4)
             {
-                int num;
-                if (i == 0)
-                {
-                    num = random.Next(1, 9);
-                }
-                else
-                {
-                    num = random.Next(0, 9);
-                }
+                int num = random.Next(1, 9);
                 if (!compInput.Contains(num.ToString()))
                 {
                     compInput += num.ToString();

@@ -16,12 +16,12 @@ namespace Mastermind
 
         public void Game(string computerInput)
         {
-            int i = 0;
+            int round = 0;
 
             List<string> finalOutput = new List<string>();
             Stack<string> perInput = new Stack<string>();
 
-            while (i < 10)
+            while (round < 10)
             {
                 Console.WriteLine();
                 Console.WriteLine($"ROUND {i + 1}");
@@ -34,7 +34,7 @@ namespace Mastermind
                     bool isNumeric = int.TryParse(userInput, out n);
                     if (userInputLength == 4 && isNumeric && userInput[0] != 0)
                     {
-                        //STORE THE USERINPUT IN MAP
+                        //Storing Unique digit 
                         List<char> uniqueUserInput = new List<char>();
                         foreach(char c in userInput)
                         {
@@ -44,7 +44,9 @@ namespace Mastermind
                             }
                         }
 
-                        for (int j = 0; j < 4 && j < uniqueUserInput.Count; j++)
+                        //Comparing computer number and user input
+
+                       for(int j=0; j<uniqueUserInput.Count; j++)
                         {
                             if (computerInput.Contains(uniqueUserInput[j]))
                             {
@@ -62,7 +64,9 @@ namespace Mastermind
                         {
                             perInputOutput += $"{userInput}: No match found";
                         }
-                        i++;
+                        round++;
+
+                        //Storing and displaying result
 
                         finalOutput.Add($"{userInput}: " + perInputOutput);
                         perInput.Push($"{userInput}: " + perInputOutput);
