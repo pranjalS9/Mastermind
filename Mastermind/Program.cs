@@ -7,8 +7,7 @@
             Console.WriteLine("MASTERMIND");
             Console.WriteLine();
 
-            int[] computerInput = new GenerateRandomNumber().ComputerInput();
-            //string computerInput = "6906";
+            string computerInput = new GenerateRandomNumber().SecretCode();
             GameHandler gameHandler = new(computerInput);
             gameHandler.Game(computerInput);
 

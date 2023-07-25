@@ -10,163 +10,120 @@ namespace Mastermind
 {
     public class GameHandler
     {
-        int[] computerInput;
-        public GameHandler(int[] compInput)
+        string secretCode;
+        public GameHandler(string secretCode)
         {
-            this.computerInput = compInput;
+            this.secretCode = secretCode;
         }
 
-        public void Game(int[] computerInput)
+        public void Game(string secretCode)
         {
-            string computerNumber = "";
-            Console.WriteLine(computerNumber);
-            for (int i = 0; i < computerInput.Length; i++)
-            {
-                computerNumber += computerInput[i].ToString();
-            }
-
-            Console.WriteLine(computerNumber);
+            Console.WriteLine(secretCode);
 
             int round = 0;
 
             List<string> finalOutput = new();
             Stack<string> perInput = new();
 
+            
+
             while (round < 10)
             {
                 Console.WriteLine();
                 Console.WriteLine($"ROUND {round + 1}");
-                string perInputOutput = "";
 
-                int[] userInput = new int[4];
+                List<bool> visited = new List<bool>(secretCode.Length);
+
+                string singleRoundResult = "";
+
+                //Taking user input and storing in a string and list
+
                 string? userNumber = Console.ReadLine();
 
                 int n;
                 bool isNumeric = int.TryParse(userNumber, out n);
 
-                if ( userNumber != null && userNumber.Length == 4 && isNumeric) 
+                if (userNumber != null && userNumber.Length == 4 && isNumeric)
                 {
-                    for (int i = 0; i < userInput.Length; i++)
+                    for (int i = 0; i < userNumber.Length; i++)
                     {
-                        userInput[i] = Convert.ToInt32(userNumber[i] - '0');
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Enter correct input");
-                }
-                
-                if (userInput != null)
-                {
-                    //Comparing computer number and user input
-                    for (int i = 0; i < userInput.Length; i++)
-                    {
-                        if (computerInput[i] == userInput[i])
+                        if (secretCode[i] == userNumber[i])
                         {
-                            perInputOutput += "BULL ";
-                            computerInput[i] = -1;
-                            userInput[i] = -1;
+                            singleRoundResult += "BULL ";
+                            visited.Add(true);
                         }
+                        else
+                        {
+                            visited.Add(false);
+                        }
+                    }
+
+                    if (singleRoundResult == "BULL BULL BULL BULL ")
+                    {
+                        Console.WriteLine("Yayy.....YOU WON!!");
+                        return;
                     }
 
                     Dictionary<int, int> userInputFreq = new Dictionary<int, int>();
                     Dictionary<int, int> computerInputFreq = new Dictionary<int, int>();
 
-                    for(int i = 0; i<4; i++)
+                    for (int i = 0; i < 4; i++)
                     {
-                        if(userInput[i] != -1)
+                        if (visited[i] == false)
                         {
-                            if (userInputFreq.ContainsKey(userInput[i]))
+                            if (userInputFreq.ContainsKey(userNumber[i] - '0'))
                             {
-                                var val = userInputFreq[userInput[i]];
-                                userInputFreq.Remove(userInput[i]);
-                                userInputFreq.Add(userInput[i], val + 1);
+                                var val = userInputFreq[userNumber[i] - '0'];
+                                userInputFreq.Remove(userNumber[i] - '0');
+                                userInputFreq.Add(userNumber[i] - '0', val + 1);
                             }
                             else
                             {
-                                userInputFreq.Add(userInput[i], 1);
+                                userInputFreq.Add(userNumber[i] - '0', 1);
                             }
                         }
                     }
                     for (int i = 0; i < 4; i++)
                     {
-                        if (computerInput[i] != -1)
+                        if (visited[i] == false)
                         {
-                            if (computerInputFreq.ContainsKey(computerInput[i]))
+                            if (computerInputFreq.ContainsKey(secretCode[i] - '0'))
                             {
-                                var val = computerInputFreq[computerInput[i]];
-                                computerInputFreq.Remove(computerInput[i]);
-                                computerInputFreq.Add(computerInput[i], val + 1);
+                                var val = computerInputFreq[secretCode[i] - '0'];
+                                computerInputFreq.Remove(secretCode[i] - '0');
+                                computerInputFreq.Add(secretCode[i] - '0', val + 1);
                             }
                             else
                             {
-                                computerInputFreq.Add(computerInput[i], 1);
+                                computerInputFreq.Add(secretCode[i] - '0', 1);
                             }
                         }
                     }
 
-                    foreach(KeyValuePair<int, int> entry in userInputFreq)
+                    foreach (KeyValuePair<int, int> entry in userInputFreq)
                     {
                         if (computerInputFreq.ContainsKey(entry.Key))
                         {
-                            while(userInputFreq[entry.Key] != 0 && computerInputFreq[entry.Key] != 0)
+                            while (userInputFreq[entry.Key] != 0 && computerInputFreq[entry.Key] != 0)
                             {
-                                perInputOutput += "COW ";
+                                singleRoundResult += "COW ";
                                 userInputFreq[entry.Key]--;
-                                Console.WriteLine(userInputFreq[entry.Key]);
                                 computerInputFreq[entry.Key]--;
-                                Console.WriteLine(computerInputFreq[entry.Key]);
                             }
                         }
                     }
 
-                    //int[] userInputFreqArray = new int[10];
-                    //int[] computerInputFreqArray = new int[10];
-
-                    //for(int i=0; i<userInput.Length; i++)
-                    //{
-                    //    if (userInput[i] != -1)
-                    //    {
-                    //        userInputFreqArray[userInput[i]]++;
-                    //    }
-                    //}
-                    //for (int i = 0; i < computerInput.Length; i++)
-                    //{
-                    //    if (computerInput[i] != -1)
-                    //    {
-                    //        computerInputFreqArray[computerInput[i]]++;
-                    //    }
-                    //}
-
-                    //for (int i = 0; i < 10; i++)
-                    //{
-                    //    if (userInputFreqArray[i] > 0 && computerInputFreqArray[i] > 0)
-                    //    {
-                    //        while (userInputFreqArray[i] != 0 && computerInputFreqArray[i] != 0)
-                    //        {
-                    //            perInputOutput += "COW ";
-                    //            userInputFreqArray[i]--;
-                    //            computerInputFreqArray[i]--;
-                    //        }
-                    //    }
-                    //}
-
-                    Console.WriteLine(perInputOutput);
-                    if (perInputOutput == "")
+                    Console.WriteLine(singleRoundResult);
+                    if (singleRoundResult == "")
                     {
-                        perInputOutput += $"{userNumber}: No match found";
-                    }
-
-                    for (int i = 0; i < computerInput.Length; i++)
-                    {
-                        computerInput[i] = Convert.ToInt32(computerNumber[i] - '0');
+                        singleRoundResult += $"{userNumber}: No match found";
                     }
                     round++;
 
                     //Storing and displaying result
 
-                    finalOutput.Add($"{userNumber}: " + perInputOutput);
-                    perInput.Push($"{userNumber}: " + perInputOutput);
+                    finalOutput.Add($"{userNumber}: " + singleRoundResult);
+                    perInput.Push($"{userNumber}: " + singleRoundResult);
 
                     Console.WriteLine();
                     Console.WriteLine($"Input {round}");
@@ -179,23 +136,18 @@ namespace Mastermind
                     {
                         perInput.Push(finalOutput[j]);
                     }
-                    if (perInputOutput == "BULL BULL BULL BULL ")
-                    {
-                        Console.WriteLine("Yayy.....YOU WON!!");
-                        return;
-                    }
+
                     if (round == 10)
                     {
                         Console.WriteLine("Oops.....YOU LOST!!");
                         return;
                     }
                 }
-                    else
-                    {
-                        Console.WriteLine("Enter correct input");
-                    }
+                else
+                {
+                    Console.WriteLine("Enter correct input");
                 }
-
             }
+        }
     }
 }
