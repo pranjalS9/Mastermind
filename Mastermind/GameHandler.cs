@@ -29,8 +29,8 @@ namespace Mastermind
 
             int round = 0;
 
-            List<string> finalOutput = new List<string>();
-            Stack<string> perInput = new Stack<string>();
+            List<string> finalOutput = new();
+            Stack<string> perInput = new();
 
             while (round < 10)
             {
@@ -39,12 +39,12 @@ namespace Mastermind
                 string perInputOutput = "";
 
                 int[] userInput = new int[4];
-                string userNumber = Console.ReadLine();
+                string? userNumber = Console.ReadLine();
 
                 int n;
                 bool isNumeric = int.TryParse(userNumber, out n);
 
-                if (userNumber.Length == 4 && isNumeric) 
+                if ( userNumber != null && userNumber.Length == 4 && isNumeric) 
                 {
                     for (int i = 0; i < userInput.Length; i++)
                     {
@@ -56,7 +56,6 @@ namespace Mastermind
                     Console.WriteLine("Enter correct input");
                 }
                 
-                //string? userInput = Console.ReadLine();
                 if (userInput != null)
                 {
                     //Comparing computer number and user input
@@ -70,78 +69,127 @@ namespace Mastermind
                         }
                     }
 
+                    Dictionary<int, int> userInputFreq = new Dictionary<int, int>();
+                    Dictionary<int, int> computerInputFreq = new Dictionary<int, int>();
 
-                    int[] userInputFreqArray = new int[10];
-                    int[] computerInputFreqArray = new int[10];
-
-                    for(int i=0; i<userInput.Length; i++)
+                    for(int i = 0; i<4; i++)
                     {
-                        if (userInput[i] != -1)
+                        if(userInput[i] != -1)
                         {
-                            userInputFreqArray[userInput[i]]++;
+                            if (userInputFreq.ContainsKey(userInput[i]))
+                            {
+                                var val = userInputFreq[userInput[i]];
+                                userInputFreq.Remove(userInput[i]);
+                                userInputFreq.Add(userInput[i], val + 1);
+                            }
+                            else
+                            {
+                                userInputFreq.Add(userInput[i], 1);
+                            }
                         }
                     }
-                    for (int i = 0; i < computerInput.Length; i++)
+                    for (int i = 0; i < 4; i++)
                     {
                         if (computerInput[i] != -1)
                         {
-                            computerInputFreqArray[computerInput[i]]++;
-                        }
-                    }
-
-                    for (int i = 0; i < 10; i++)
-                    {
-                        if (userInputFreqArray[i] > 0 && computerInputFreqArray[i] > 0)
-                        {
-                            while (userInputFreqArray[i] != 0 && computerInputFreqArray[i] != 0)
+                            if (computerInputFreq.ContainsKey(computerInput[i]))
                             {
-                                perInputOutput += "COW ";
-                                userInputFreqArray[i]--;
-                                computerInputFreqArray[i]--;
+                                var val = computerInputFreq[computerInput[i]];
+                                computerInputFreq.Remove(computerInput[i]);
+                                computerInputFreq.Add(computerInput[i], val + 1);
+                            }
+                            else
+                            {
+                                computerInputFreq.Add(computerInput[i], 1);
                             }
                         }
                     }
 
-                    Console.WriteLine(perInputOutput);
-
-                    if (perInputOutput == "")
+                    foreach(KeyValuePair<int, int> entry in userInputFreq)
+                    {
+                        if (computerInputFreq.ContainsKey(entry.Key))
                         {
-                            perInputOutput += $"{userNumber}: No match found";
-                        }
-
-                        for (int i = 0; i < computerInput.Length; i++)
-                        {
-                            computerInput[i] = Convert.ToInt32(computerNumber[i] - '0');
-                        }
-                        round++;
-
-                        //Storing and displaying result
-
-                        finalOutput.Add($"{userNumber}: " + perInputOutput);
-                        perInput.Push($"{userNumber}: " + perInputOutput);
-
-                        Console.WriteLine();
-                        Console.WriteLine($"Input {round}");
-
-                        while (perInput.Count > 0)
-                        {
-                            Console.WriteLine(perInput.Pop());
-                        }
-                        for (int j = finalOutput.Count - 1; j >= 0; j--)
-                        {
-                            perInput.Push(finalOutput[j]);
-                        }
-                        if (perInputOutput == "BULL BULL BULL BULL ")
-                        {
-                            Console.WriteLine("Yayy.....YOU WON!!");
-                            return;
-                        }
-                        if (round == 10)
-                        {
-                            Console.WriteLine("Oops.....YOU LOST!!");
-                            return;
+                            while(userInputFreq[entry.Key] != 0 && computerInputFreq[entry.Key] != 0)
+                            {
+                                perInputOutput += "COW ";
+                                userInputFreq[entry.Key]--;
+                                Console.WriteLine(userInputFreq[entry.Key]);
+                                computerInputFreq[entry.Key]--;
+                                Console.WriteLine(computerInputFreq[entry.Key]);
+                            }
                         }
                     }
+
+                    //int[] userInputFreqArray = new int[10];
+                    //int[] computerInputFreqArray = new int[10];
+
+                    //for(int i=0; i<userInput.Length; i++)
+                    //{
+                    //    if (userInput[i] != -1)
+                    //    {
+                    //        userInputFreqArray[userInput[i]]++;
+                    //    }
+                    //}
+                    //for (int i = 0; i < computerInput.Length; i++)
+                    //{
+                    //    if (computerInput[i] != -1)
+                    //    {
+                    //        computerInputFreqArray[computerInput[i]]++;
+                    //    }
+                    //}
+
+                    //for (int i = 0; i < 10; i++)
+                    //{
+                    //    if (userInputFreqArray[i] > 0 && computerInputFreqArray[i] > 0)
+                    //    {
+                    //        while (userInputFreqArray[i] != 0 && computerInputFreqArray[i] != 0)
+                    //        {
+                    //            perInputOutput += "COW ";
+                    //            userInputFreqArray[i]--;
+                    //            computerInputFreqArray[i]--;
+                    //        }
+                    //    }
+                    //}
+
+                    Console.WriteLine(perInputOutput);
+                    if (perInputOutput == "")
+                    {
+                        perInputOutput += $"{userNumber}: No match found";
+                    }
+
+                    for (int i = 0; i < computerInput.Length; i++)
+                    {
+                        computerInput[i] = Convert.ToInt32(computerNumber[i] - '0');
+                    }
+                    round++;
+
+                    //Storing and displaying result
+
+                    finalOutput.Add($"{userNumber}: " + perInputOutput);
+                    perInput.Push($"{userNumber}: " + perInputOutput);
+
+                    Console.WriteLine();
+                    Console.WriteLine($"Input {round}");
+
+                    while (perInput.Count > 0)
+                    {
+                        Console.WriteLine(perInput.Pop());
+                    }
+                    for (int j = finalOutput.Count - 1; j >= 0; j--)
+                    {
+                        perInput.Push(finalOutput[j]);
+                    }
+                    if (perInputOutput == "BULL BULL BULL BULL ")
+                    {
+                        Console.WriteLine("Yayy.....YOU WON!!");
+                        return;
+                    }
+                    if (round == 10)
+                    {
+                        Console.WriteLine("Oops.....YOU LOST!!");
+                        return;
+                    }
+                }
                     else
                     {
                         Console.WriteLine("Enter correct input");
